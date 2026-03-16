@@ -9,14 +9,13 @@ Hệ thống cho phép người dùng tìm kiếm sách, đăng ký mượn sác
 ### 👨‍💼 Quản trị viên (Admin)
 * Quản lý toàn bộ hệ thống
 * Quản lý người dùng
-* Xem thống kê hệ thống
+* Thống kê hệ thống
 
 ### 📚 Thủ thư
 * Quản lý sách, danh mục sách
 * Quản lý mượn và trả sách
 * Kiểm tra tình trạng sách
 * Xử lý yêu cầu mượn sách
-* Thống kê hoạt động của thư viện
   
 ### 👤 Người đọc (User / Sinh viên)
 * Tìm kiếm sách
