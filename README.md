@@ -50,7 +50,7 @@ Hệ thống thư viện có các nghiệp vụ chính:
    * Xem danh sách người đọc
    * Cập nhật thông tin
    * Khóa tài khoản nếu vi phạm
-   * 
+  
 ## 3.3 Quy trình mượn sách
 1. Người đọc đăng nhập website
 2. Tìm kiếm sách cần mượn
