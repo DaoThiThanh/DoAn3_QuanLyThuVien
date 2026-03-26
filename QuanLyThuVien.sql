@@ -1,190 +1,178 @@
--- T?o Database
+﻿-- =============================================
+-- 1. TẠO DATABASE
+-- =============================================
 CREATE DATABASE QuanLyThuVien;
 GO
 
 USE QuanLyThuVien;
 GO
 
--- 1. B?NG QUY ??NH TH? VI?N
+-- =============================================
+-- 2. BẢNG THAM SỐ QUY ĐỊNH
+-- =============================================
 CREATE TABLE tham_so_quy_dinh (
     id VARCHAR(50) PRIMARY KEY,
-    so_sach_muon_toi_da INT NOT NULL DEFAULT 3,
-    so_ngay_muon_toi_da INT NOT NULL DEFAULT 14,
-    phi_phat_tre_han DECIMAL(10, 2) NOT NULL DEFAULT 1000,
-    updated_at DATETIME DEFAULT GETDATE()
+    ten_quy_dinh NVARCHAR(100),
+    so_sach_muon_toi_da INT NOT NULL,
+    so_ngay_muon_toi_da INT NOT NULL,
+    phi_phat_tre_han DECIMAL(10,2) NOT NULL,
+    cap_nhat_luc DATETIME DEFAULT GETDATE()
 );
 GO
 
--- 2. B?NG NG??I D�NG
-CREATE TABLE users (
+-- =============================================
+-- 3. BẢNG NGƯỜI DÙNG
+-- =============================================
+CREATE TABLE nguoi_dung (
     id VARCHAR(50) PRIMARY KEY,
-    ho_ten NVARCHAR(100) NOT NULL, -- D�ng NVARCHAR ?? l?u ti?ng Vi?t c� d?u
-    email VARCHAR(100) NOT NULL UNIQUE,
+    ho_ten NVARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
     mat_khau VARCHAR(255) NOT NULL,
-    sdt VARCHAR(15),
-    vai_tro NVARCHAR(20) NOT NULL CHECK (vai_tro IN (N'ADMIN', N'TH? TH?', N'??C GI?')),
-    trang_thai NVARCHAR(20) DEFAULT N'HO?T ??NG' CHECK (trang_thai IN (N'HO?T ??NG', N'B? KH�A')),
+    so_dien_thoai VARCHAR(15),
+    vai_tro NVARCHAR(20) NOT NULL 
+        CHECK (vai_tro IN (N'ADMIN', N'THỦ THƯ', N'ĐỘC GIẢ')),
+    trang_thai NVARCHAR(20) DEFAULT N'HOẠT ĐỘNG' 
+        CHECK (trang_thai IN (N'HOẠT ĐỘNG', N'BỊ KHÓA')),
     so_lan_vi_pham INT DEFAULT 0,
-    created_at DATETIME DEFAULT GETDATE()
+    tham_so_id VARCHAR(50) NOT NULL,
+    tao_luc DATETIME DEFAULT GETDATE(),
+    CONSTRAINT FK_nd_tham_so
+        FOREIGN KEY (tham_so_id) REFERENCES tham_so_quy_dinh(id)
 );
 GO
 
--- 3. B?NG DANH M?C S�CH
-CREATE TABLE categories (
+-- =============================================
+-- 4. DANH MỤC SÁCH
+-- =============================================
+CREATE TABLE danh_muc_sach (
     id VARCHAR(50) PRIMARY KEY,
-    ten_danh_muc NVARCHAR(100) NOT NULL UNIQUE,
-    mo_ta NVARCHAR(MAX) NULL
+    ten_danh_muc NVARCHAR(100) UNIQUE NOT NULL,
+    mo_ta NVARCHAR(MAX)
 );
 GO
 
--- 4. B?NG S�CH
-CREATE TABLE books (
+-- =============================================
+-- 5. BẢNG SÁCH
+-- =============================================
+CREATE TABLE sach (
     id VARCHAR(50) PRIMARY KEY,
     ten_sach NVARCHAR(255) NOT NULL,
     tac_gia NVARCHAR(100) NOT NULL,
     nha_xuat_ban NVARCHAR(100),
     nam_xuat_ban INT,
-    hinh_anh VARCHAR(255) NULL,
-    mo_ta_sach NVARCHAR(MAX) NULL,
-    so_luong_kho INT NOT NULL DEFAULT 0,
-    category_id VARCHAR(50) NOT NULL,
-    trang_thai NVARCHAR(20) DEFAULT N'C�N S�CH' CHECK (trang_thai IN (N'C�N S�CH', N'H?T S�CH', N'NG?NG PH?C V?')),
-    CONSTRAINT FK_books_categories FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE NO ACTION
+    hinh_anh VARCHAR(255),
+    mo_ta NVARCHAR(MAX),
+    so_luong INT DEFAULT 0,
+    danh_muc_id VARCHAR(50) NOT NULL,
+    trang_thai NVARCHAR(20) DEFAULT N'CÒN SÁCH'
+        CHECK (trang_thai IN (N'CÒN SÁCH', N'HẾT SÁCH', N'NGỪNG PHỤC VỤ')),
+    CONSTRAINT FK_sach_danh_muc
+        FOREIGN KEY (danh_muc_id) REFERENCES danh_muc_sach(id)
 );
 GO
 
--- 5. B?NG Y�U C?U M??N
-CREATE TABLE borrow_requests (
+-- =============================================
+-- 6. YÊU CẦU MƯỢN
+-- =============================================
+CREATE TABLE yeu_cau_muon (
     id VARCHAR(50) PRIMARY KEY,
-    user_id VARCHAR(50),
+    nguoi_dung_id VARCHAR(50) NOT NULL,
     ngay_yeu_cau DATETIME DEFAULT GETDATE(),
-    ghi_chu_nguoi_muon NVARCHAR(MAX) NULL,
-    trang_thai NVARCHAR(20) DEFAULT N'CH? DUY?T' CHECK (trang_thai IN (N'CH? DUY?T', N'?� DUY?T', N'T? CH?I', N'?� H?Y')),
-    CONSTRAINT FK_borrow_requests_users FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ghi_chu NVARCHAR(MAX),
+    trang_thai NVARCHAR(20) DEFAULT N'CHỜ DUYỆT'
+        CHECK (trang_thai IN (N'CHỜ DUYỆT', N'ĐÃ DUYỆT', N'TỪ CHỐI', N'ĐÃ HỦY')),
+    CONSTRAINT FK_yc_nd
+        FOREIGN KEY (nguoi_dung_id) REFERENCES nguoi_dung(id) ON DELETE CASCADE
 );
 GO
 
--- 6. CHI TI?T Y�U C?U M??N
-CREATE TABLE request_details (
-    request_id VARCHAR(50) NOT NULL,
-    book_id VARCHAR(50) NOT NULL,
-    PRIMARY KEY (request_id, book_id),
-    CONSTRAINT FK_req_details_req FOREIGN KEY (request_id) REFERENCES borrow_requests(id) ON DELETE CASCADE,
-    CONSTRAINT FK_req_details_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+-- =============================================
+-- 7. CHI TIẾT YÊU CẦU
+-- =============================================
+CREATE TABLE chi_tiet_yeu_cau (
+    yeu_cau_id VARCHAR(50),
+    sach_id VARCHAR(50),
+    PRIMARY KEY (yeu_cau_id, sach_id),
+    FOREIGN KEY (yeu_cau_id) REFERENCES yeu_cau_muon(id) ON DELETE CASCADE,
+    FOREIGN KEY (sach_id) REFERENCES sach(id) ON DELETE CASCADE
 );
 GO
 
--- 7. B?NG PHI?U M??N
-CREATE TABLE borrow_tickets (
+-- =============================================
+-- 8. PHIẾU MƯỢN
+-- =============================================
+CREATE TABLE phieu_muon (
     id VARCHAR(50) PRIMARY KEY,
-    user_id VARCHAR(50) NOT NULL, 
-    librarian_id VARCHAR(50) NOT NULL, 
-    request_id VARCHAR(50) NULL UNIQUE, 
+    doc_gia_id VARCHAR(50) NOT NULL,
+    thu_thu_id VARCHAR(50) NOT NULL,
+    yeu_cau_id VARCHAR(50) UNIQUE,
     ngay_muon DATETIME DEFAULT GETDATE(),
     ngay_phai_tra DATETIME NOT NULL,
-    tong_tien_phat DECIMAL(10, 2) DEFAULT 0.00,
-    trang_thai NVARCHAR(20) DEFAULT N'?ANG M??N' CHECK (trang_thai IN (N'?ANG M??N', N'?� TR? ??', N'QU� H?N')),
-    CONSTRAINT FK_tickets_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION,
-    CONSTRAINT FK_tickets_librarian FOREIGN KEY (librarian_id) REFERENCES users(id) ON DELETE NO ACTION,
-    CONSTRAINT FK_tickets_request FOREIGN KEY (request_id) REFERENCES borrow_requests(id) ON DELETE SET NULL
+    tong_tien_phat DECIMAL(10,2) DEFAULT 0,
+    trang_thai NVARCHAR(20) DEFAULT N'ĐANG MƯỢN'
+        CHECK (trang_thai IN (N'ĐANG MƯỢN', N'ĐÃ TRẢ', N'QUÁ HẠN')),
+    FOREIGN KEY (doc_gia_id) REFERENCES nguoi_dung(id),
+    FOREIGN KEY (thu_thu_id) REFERENCES nguoi_dung(id),
+    FOREIGN KEY (yeu_cau_id) REFERENCES yeu_cau_muon(id) ON DELETE SET NULL
 );
 GO
 
--- 8. CHI TI?T PHI?U M??N
-CREATE TABLE ticket_details (
-    ticket_id VARCHAR(50) NOT NULL,
-    book_id VARCHAR(50) NOT NULL,
-    tinh_trang_khi_muon NVARCHAR(255) NOT NULL,
-    tinh_trang_khi_tra NVARCHAR(255) NULL,
-    tien_phat_sach DECIMAL(10, 2) DEFAULT 0.00,
-    trang_thai_sach NVARCHAR(20) DEFAULT N'?ANG M??N' CHECK (trang_thai_sach IN (N'?ANG M??N', N'?� TR?', N'L�M M?T', N'H?NG')),
-    PRIMARY KEY (ticket_id, book_id),
-    CONSTRAINT FK_ticket_details_ticket FOREIGN KEY (ticket_id) REFERENCES borrow_tickets(id) ON DELETE CASCADE,
-    CONSTRAINT FK_ticket_details_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE NO ACTION
+-- =============================================
+-- 9. CHI TIẾT PHIẾU MƯỢN
+-- =============================================
+CREATE TABLE chi_tiet_phieu_muon (
+    phieu_muon_id VARCHAR(50),
+    sach_id VARCHAR(50),
+    tinh_trang_khi_muon NVARCHAR(255),
+    tinh_trang_khi_tra NVARCHAR(255),
+    tien_phat DECIMAL(10,2) DEFAULT 0,
+    trang_thai NVARCHAR(20) DEFAULT N'ĐANG MƯỢN'
+        CHECK (trang_thai IN (N'ĐANG MƯỢN', N'ĐÃ TRẢ', N'LÀM MẤT', N'HỎNG')),
+    PRIMARY KEY (phieu_muon_id, sach_id),
+    FOREIGN KEY (phieu_muon_id) REFERENCES phieu_muon(id) ON DELETE CASCADE,
+    FOREIGN KEY (sach_id) REFERENCES sach(id)
 );
 GO
 
--- 9. TRIGGER C?P NH?T TH?I GIAN CHO B?NG QUY ??NH
-CREATE TRIGGER trg_Update_ThamSoQuyDinh
-ON tham_so_quy_dinh
-AFTER UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-    UPDATE tham_so_quy_dinh
-    SET updated_at = GETDATE()
-    WHERE id IN (SELECT id FROM inserted);
-END;
-GO
+-- =============================================
+-- 10. DỮ LIỆU MẪU
+-- =============================================
 
-INSERT INTO tham_so_quy_dinh (id, so_sach_muon_toi_da, so_ngay_muon_toi_da, phi_phat_tre_han)
-VALUES
-('QD01', 3, 14, 1000),
-('QD02', 5, 10, 2000),
-('QD03', 2, 7, 1500),
-('QD04', 4, 20, 1200),
-('QD05', 6, 15, 2500),
-('QD06', 3, 30, 500),
-('QD07', 1, 5, 3000),
-('QD08', 7, 25, 800),
-('QD09', 2, 12, 1000),
-('QD10', 4, 18, 1800);
+-- THAM SỐ
+INSERT INTO tham_so_quy_dinh VALUES
+('QD01', N'Quy định thường', 3, 14, 1000, GETDATE()),
+('QD02', N'VIP', 5, 30, 500, GETDATE()),
+('QD03', N'Hạn chế', 1, 7, 3000, GETDATE());
 
-INSERT INTO users (
-    id, ho_ten, email, mat_khau, sdt, vai_tro,
-    trang_thai, so_lan_vi_pham, created_at
-)
-VALUES
-('U01', N'Nguy?n V?n An', 'an@gmail.com', 'an123', '090000001', N'ADMIN', N'HO?T ??NG', 0, GETDATE()),
-('U02', N'Tr?n Th? B�nh', 'binh@gmail.com', 'binh123', '090000002', N'TH? TH?', N'HO?T ??NG', 0, GETDATE()),
-('U03', N'L� V?n C??ng', 'cuong@gmail.com', 'cuong123', '090000003', N'??C GI?', N'HO?T ??NG', 1, GETDATE()),
-('U04', N'Ph?m Th? Duy�n', 'duyen@gmail.com', 'duyen123', '090000004', N'??C GI?', N'HO?T ??NG', 0, GETDATE()),
-('U05', N'Ho�ng V?n Uy�n', 'uyen@gmail.com', 'uyen123', '090000005', N'??C GI?', N'B? KH�A', 2, GETDATE());
+-- NGƯỜI DÙNG
+INSERT INTO nguoi_dung VALUES
+('ND01', N'Nguyễn Văn A', 'a@gmail.com', '123', '0901', N'ADMIN', N'HOẠT ĐỘNG', 0, 'QD01', GETDATE()),
+('ND02', N'Trần Thị B', 'b@gmail.com', '123', '0902', N'THỦ THƯ', N'HOẠT ĐỘNG', 0, 'QD01', GETDATE()),
+('ND03', N'Lê Văn C', 'c@gmail.com', '123', '0903', N'ĐỘC GIẢ', N'HOẠT ĐỘNG', 0, 'QD02', GETDATE()),
+('ND04', N'Phạm Văn D', 'd@gmail.com', '123', '0904', N'ĐỘC GIẢ', N'HOẠT ĐỘNG', 2, 'QD03', GETDATE());
 
-INSERT INTO categories (id, ten_danh_muc, mo_ta)
-VALUES
-('C01', N'C�ng ngh? th�ng tin', N'S�ch v? l?p tr�nh, ph?n m?m, AI'),
-('C02', N'Kinh t?', N'S�ch v? kinh doanh, t�i ch�nh'),
-('C03', N'V?n h?c', N'Truy?n, ti?u thuy?t, th?'),
-('C04', N'Khoa h?c', N'S�ch khoa h?c t? nhi�n, nghi�n c?u'),
-('C05', N'Thi?u nhi', N'S�ch d�nh cho tr? em');
+-- DANH MỤC
+INSERT INTO danh_muc_sach VALUES
+('DM01', N'Công nghệ thông tin', N'Lập trình'),
+('DM02', N'Kinh tế', N'Kinh doanh');
 
-INSERT INTO books (
-    id, ten_sach, tac_gia, nha_xuat_ban, nam_xuat_ban,
-    hinh_anh, mo_ta_sach, so_luong_kho, category_id, trang_thai
-)
-VALUES
-('B01', N'L?p tr�nh C# c? b?n', N'Nguy?n V?n A', N'NXB Gi�o D?c', 2020, NULL, N'S�ch h?c C# cho ng??i m?i', 10, 'C01', N'C�N S�CH'),
-('B02', N'ASP.NET Core n�ng cao', N'Tr?n V?n B', N'NXB Khoa H?c', 2021, NULL, N'Ph�t tri?n web v?i .NET', 5, 'C01', N'C�N S�CH'),
-('B03', N'Kinh t? vi m�', N'L� V?n C', N'NXB Kinh T?', 2019, NULL, N'Ki?n th?c kinh t? c? b?n', 7, 'C02', N'C�N S�CH'),
-('B04', N'D? m�n phi�u l?u k�', N'T� Ho�i', N'NXB Kim ??ng', 2018, NULL, N'Truy?n thi?u nhi n?i ti?ng', 3, 'C05', N'C�N S�CH'),
-('B05', N'Truy?n Ki?u', N'Nguy?n Du', N'NXB V?n H?c', 2015, NULL, N'T�c ph?m v?n h?c kinh ?i?n', 0, 'C03', N'H?T S�CH');
+-- SÁCH
+INSERT INTO sach VALUES
+('S01', N'Lập trình C#', N'Nguyễn A', N'NXB GD', 2020, NULL, NULL, 10, 'DM01', N'CÒN SÁCH'),
+('S02', N'Kinh tế học', N'Lê B', N'NXB KT', 2019, NULL, NULL, 5, 'DM02', N'CÒN SÁCH');
 
-INSERT INTO borrow_requests (
-    id, user_id, ngay_yeu_cau, ghi_chu_nguoi_muon, trang_thai
-)
-VALUES
-('R01', 'U03', GETDATE(), N'M??n ?? h?c', N'CH? DUY?T'),
-('R02', 'U04', GETDATE(), N'M??n ??c gi?i tr�', N'?� DUY?T'),
-('R03', 'U03', GETDATE(), NULL, N'T? CH?I');
+-- YÊU CẦU
+INSERT INTO yeu_cau_muon VALUES
+('YC01', 'ND03', GETDATE(), NULL, N'CHỜ DUYỆT');
 
-INSERT INTO request_details (request_id, book_id)
-VALUES
-('R01', 'B01'),
-('R01', 'B02'),
-('R02', 'B04'),
-('R03', 'B05');
+-- CHI TIẾT YÊU CẦU
+INSERT INTO chi_tiet_yeu_cau VALUES
+('YC01', 'S01');
 
-INSERT INTO borrow_tickets (
-    id, user_id, librarian_id, request_id,
-    ngay_muon, ngay_phai_tra, tong_tien_phat, trang_thai
-)
-VALUES
-('T01', 'U04', 'U02', 'R02', GETDATE(), DATEADD(DAY, 14, GETDATE()), 0, N'?ANG M??N');
+-- PHIẾU MƯỢN
+INSERT INTO phieu_muon VALUES
+('PM01', 'ND03', 'ND02', 'YC01', GETDATE(), DATEADD(DAY, 30, GETDATE()), 0, N'ĐANG MƯỢN');
 
-INSERT INTO ticket_details (
-    ticket_id, book_id, tinh_trang_khi_muon,
-    tinh_trang_khi_tra, tien_phat_sach, trang_thai_sach
-)
-VALUES
-('T01', 'B04', N'S�ch m?i', NULL, 0, N'?ANG M??N');
+-- CHI TIẾT PHIẾU
+INSERT INTO chi_tiet_phieu_muon VALUES
+('PM01', 'S01', N'Mới', NULL, 0, N'ĐANG MƯỢN');
