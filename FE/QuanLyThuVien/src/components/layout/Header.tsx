@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Header.css';
 
 const Header: React.FC = () => {
@@ -46,9 +47,9 @@ const Header: React.FC = () => {
             <span className="notif-badge"></span>
           </button>
 
-          <div className="user-profile">
-            <div className="avatar">N</div>
-            <span className="user-name">Tuấn</span>
+          <div className="auth-actions">
+            <Link to="/login" className="btn-auth btn-login-outline">Đăng nhập</Link>
+            <Link to="/register" className="btn-auth btn-register-solid">Đăng ký</Link>
           </div>
         </div>
       </div>

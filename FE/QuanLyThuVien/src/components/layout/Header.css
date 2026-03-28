@@ -157,3 +157,49 @@
   font-size: 14px;
   color: #374151;
 }
+
+/* Auth Actions */
+.auth-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 8px;
+}
+
+.btn-auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-login-outline {
+  color: #3b82f6;
+  background-color: transparent;
+  border: 1px solid #3b82f6;
+}
+
+.btn-login-outline:hover {
+  background-color: #eff6ff;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.btn-register-solid {
+  background-color: #3b82f6;
+  color: white;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px rgba(59, 130, 246, 0.4);
+}
+
+.btn-register-solid:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4);
+}
