@@ -61,16 +61,20 @@
   gap: 24px;
   overflow-x: auto;
   padding-bottom: 16px;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
 }
 
 .new-books-list::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
+  /* Chrome, Safari, Opera */
 }
 
 .new-book-card {
-  flex: 0 0 300px; /* Fixed width matching the typical card size */
+  flex: 0 0 300px;
+  /* Fixed width matching the typical card size */
   background-color: #ffffff;
   border-radius: 16px;
   overflow: hidden;

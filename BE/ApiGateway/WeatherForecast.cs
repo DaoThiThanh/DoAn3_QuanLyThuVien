@@ -1,4 +1,4 @@
-namespace QuanLyThuVien
+namespace ApiGateway
 {
     public class WeatherForecast
     {
