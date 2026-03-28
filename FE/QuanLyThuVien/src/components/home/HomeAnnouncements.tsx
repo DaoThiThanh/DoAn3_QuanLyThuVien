@@ -1,6 +1,7 @@
 import React from 'react';
 import './HomeAnnouncements.css';
 
+
 const HomeAnnouncements: React.FC = () => {
   return (
     <div className="announcements-container">

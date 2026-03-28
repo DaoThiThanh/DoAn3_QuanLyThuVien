@@ -3,6 +3,8 @@ import Header from '../components/layout/Header';
 import LibraryHero from '../components/layout/LibraryHero';
 import HomeAnnouncements from '../components/home/HomeAnnouncements';
 import PopularBooks from '../components/home/PopularBooks';
+import BookCategories from '../components/home/BookCategories';
+import NewBooks from '../components/home/NewBooks';
 
 const HomePage: React.FC = () => {
   return (
@@ -12,6 +14,8 @@ const HomePage: React.FC = () => {
       <main>
         <HomeAnnouncements />
         <PopularBooks />
+        <BookCategories />
+        <NewBooks />
       </main>
     </div>
   );

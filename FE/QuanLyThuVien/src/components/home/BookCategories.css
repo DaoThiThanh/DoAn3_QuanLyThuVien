@@ -1,0 +1,104 @@
+.categories-section {
+  padding: 40px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.categories-section .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.categories-section .header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.icon-grid {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background-color: #f3e8ff;
+  color: #9333ea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.categories-section .section-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+}
+
+.categories-section .section-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 16px;
+}
+
+.category-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border-color: #e2e8f0;
+}
+
+.category-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 28px;
+}
+
+.icon-cntt { background-color: #e0f2fe; }
+.icon-toan { background-color: #f1f5f9; }
+.icon-vatly { background-color: #fce7f3; }
+.icon-lichsu { background-color: #ffedd5; }
+.icon-kinhte { background-color: #dcfce7; }
+.icon-ngoaingu { background-color: #e0e7ff; }
+.icon-vanhoc { background-color: #fee2e2; }
+.icon-hoahoc { background-color: #ccfbf1; }
+.icon-triethoc { background-color: #fef3c7; }
+
+.category-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.category-count {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+}
