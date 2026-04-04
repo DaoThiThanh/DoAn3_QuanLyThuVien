@@ -37,6 +37,27 @@ namespace IdentityService.Controllers
             };
             return Ok(ResultRepository<object>.Ok(responseData, "Đăng nhập thành công!"));
         }
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] RegisterRequest request)
+        {
+            // 1. Kiểm tra đầu vào cơ bản (Validation)
+            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.MatKhau))
+            {
+                return BadRequest(ResultRepository<object>.Fail("Email và mật khẩu không được để trống!"));
+            }
 
+            // 2. Gọi Repo để xử lý logic (Kiểm tra trùng Email + Insert)
+            // Giả sử hàm RegisterUser trả về bool và thông báo (out message)
+            bool isSuccess = _userRepo.RegisterUser(request.HoTen,request.Email, request.MatKhau, request.SoDienThoai out string message);
+
+            if (!isSuccess)
+            {
+                // Trả về lỗi 400 (BadRequest) nếu email đã tồn tại hoặc lỗi hệ thống
+                return BadRequest(ResultRepository<object>.Fail(message));
+            }
+
+            // 3. Trả về thành công
+            return Ok(ResultRepository<object>.Ok(null, "Đăng ký tài khoản thành công!"));
+        }
     }
 }
