@@ -48,7 +48,7 @@ namespace IdentityService.Controllers
 
             // 2. Gọi Repo để xử lý logic (Kiểm tra trùng Email + Insert)
             // Giả sử hàm RegisterUser trả về bool và thông báo (out message)
-            bool isSuccess = _userRepo.RegisterUser(request.HoTen,request.Email, request.MatKhau, request.SoDienThoai out string message);
+            bool isSuccess = _userRepo.RegisterUser(request.HoTen, request.Email, request.MatKhau, request.SoDienThoai, out string message);
 
             if (!isSuccess)
             {

@@ -61,15 +61,16 @@ namespace IdentityService.Repositories
 
                 // 2. Nếu Email chưa tồn tại, tiến hành thêm mới (Insert)
                 // Lưu ý: Tôi giả định Id là kiểu UNIQUEIDENTIFIER (Guid) và tự động tạo mới bằng NEWID()
-                string insertQuery = @"INSERT INTO NguoiDung (Id, Email, MatKhau, VaiTro, TrangThai) 
-                               VALUES (NEWID(), @Email, @MatKhau, @VaiTro, 1);";
+                string insertQuery = @"INSERT INTO NguoiDung (Id, HoTen, Email, MatKhau, SoDienThoai, VaiTro, TrangThai) 
+                               VALUES (NEWID(),@HoTen, @Email, @MatKhau, @SoDienThoai, 3, 1);";
 
                 using (SqlCommand insertCmd = new SqlCommand(insertQuery, conn))
                 {
-                    insertCmd.Parameters.AddWithValue("@HoTen", email);
+                    insertCmd.Parameters.AddWithValue("@HoTen", hoten);
                     insertCmd.Parameters.AddWithValue("@Email", email);
                     insertCmd.Parameters.AddWithValue("@MatKhau", matkhau); // Nên mã hóa Hash mật khẩu trước khi truyền vào đây
                     insertCmd.Parameters.AddWithValue("@SoDienThoai", sodienthoai);
+                    
 
                     int rowsAffected = insertCmd.ExecuteNonQuery();
                     if (rowsAffected > 0)
@@ -86,7 +87,6 @@ namespace IdentityService.Repositories
 
             return isSuccess;
         }
-        }
-
     }
+
 }
