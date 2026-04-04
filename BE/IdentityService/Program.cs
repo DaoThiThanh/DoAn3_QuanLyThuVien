@@ -9,6 +9,8 @@ namespace IdentityService
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddScoped<Services.TokenGenerator>();
+            builder.Services.AddScoped<Repositories.UserRepository>();
 
             var app = builder.Build();
 

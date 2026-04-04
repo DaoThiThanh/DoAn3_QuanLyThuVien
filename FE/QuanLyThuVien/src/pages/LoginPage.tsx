@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import './LoginPage.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import authService from '../services/modules/authService';
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate(); // Khởi tạo hook điều hướng
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -16,10 +18,37 @@ const LoginPage: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Logging in with:', formData);
-    // TODO: Connect to authentication API
+
+    try {
+      console.log('Đang gửi dữ liệu đăng nhập:', formData);
+
+      // Gọi API thông qua authService
+      // Lưu ý: Nếu API của bạn dùng 'username' thay vì 'email', 
+      // hãy đổi key tương ứng: { username: formData.email, password: formData.password }
+      const response: any = await authService.login(formData);
+
+      // Giả sử API trả về token khi thành công
+      if (response && response.token) {
+        // 1. Lưu token vào localStorage để dùng cho các request sau
+        localStorage.setItem('accessToken', response.token);
+
+        // 2. (Tùy chọn) Lưu thông tin user nếu cần
+        // localStorage.setItem('user', JSON.stringify(response.user));
+
+        alert('Đăng nhập thành công!');
+
+        // 3. Chuyển hướng về trang chủ hoặc trang quản lý
+        navigate('/');
+      }
+    } catch (error: any) {
+      console.error('Lỗi đăng nhập:', error);
+
+      // Hiển thị thông báo lỗi cho người dùng
+      const errorMessage = error.response?.data?.message || 'Email hoặc mật khẩu không chính xác!';
+      alert(errorMessage);
+    }
   };
 
   return (
@@ -117,5 +146,4 @@ const LoginPage: React.FC = () => {
     </div>
   );
 };
-
 export default LoginPage;
