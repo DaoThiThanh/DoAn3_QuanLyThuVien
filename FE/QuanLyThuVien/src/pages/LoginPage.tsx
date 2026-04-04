@@ -1,53 +1,44 @@
 import React, { useState } from 'react';
 import './LoginPage.css';
 import { Link, useNavigate } from 'react-router-dom';
-import authService from '../services/modules/authService';
+import { loginApi } from '../services/modules/authService';
 
 const LoginPage: React.FC = () => {
-  const navigate = useNavigate(); // Khởi tạo hook điều hướng
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
+    matkhau: '',
   });
+
+  const [remember, setRemember] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRemember(e.target.checked);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
 
     try {
-      console.log('Đang gửi dữ liệu đăng nhập:', formData);
+      // loginApi now natively saves tokens, role, and userId!
+      await loginApi(formData, remember);
 
-      // Gọi API thông qua authService
-      // Lưu ý: Nếu API của bạn dùng 'username' thay vì 'email', 
-      // hãy đổi key tương ứng: { username: formData.email, password: formData.password }
-      const response: any = await authService.login(formData);
-
-      // Giả sử API trả về token khi thành công
-      if (response && response.token) {
-        // 1. Lưu token vào localStorage để dùng cho các request sau
-        localStorage.setItem('accessToken', response.token);
-
-        // 2. (Tùy chọn) Lưu thông tin user nếu cần
-        // localStorage.setItem('user', JSON.stringify(response.user));
-
-        alert('Đăng nhập thành công!');
-
-        // 3. Chuyển hướng về trang chủ hoặc trang quản lý
-        navigate('/');
-      }
-    } catch (error: any) {
-      console.error('Lỗi đăng nhập:', error);
-
-      // Hiển thị thông báo lỗi cho người dùng
-      const errorMessage = error.response?.data?.message || 'Email hoặc mật khẩu không chính xác!';
-      alert(errorMessage);
+      // Navigate to homepage after successful login
+      navigate('/');
+    } catch (err: any) {
+      console.error('Lỗi đăng nhập:', err);
+      setError(err.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,6 +88,12 @@ const LoginPage: React.FC = () => {
               Chưa có tài khoản? <Link to="/register" className="register-link">Đăng ký ngay</Link>
             </p>
 
+            {error && (
+              <div className="error-message" style={{ color: '#d32f2f', backgroundColor: '#ffebee', padding: '10px', borderRadius: '4px', marginBottom: '15px', fontSize: '14px' }}>
+                {error}
+              </div>
+            )}
+
             <form className="login-form" onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="email">Email</label>
@@ -120,10 +117,10 @@ const LoginPage: React.FC = () => {
                   <svg className="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
                   <input
                     type="password"
-                    id="password"
-                    name="password"
+                    id="matkhau"
+                    name="matkhau"
                     placeholder="••••••••"
-                    value={formData.password}
+                    value={formData.matkhau}
                     onChange={handleChange}
                     required
                   />
@@ -132,13 +129,20 @@ const LoginPage: React.FC = () => {
 
               <div className="form-options">
                 <div className="remember-me">
-                  <input type="checkbox" id="remember" />
+                  <input
+                    type="checkbox"
+                    id="remember"
+                    checked={remember}
+                    onChange={handleCheckboxChange}
+                  />
                   <label htmlFor="remember">Ghi nhớ đăng nhập</label>
                 </div>
                 <a href="#" className="forgot-password">Quên mật khẩu?</a>
               </div>
 
-              <button type="submit" className="btn-login">Đăng nhập</button>
+              <button type="submit" className="btn-login" disabled={loading}>
+                {loading ? 'Đang xử lý...' : 'Đăng nhập'}
+              </button>
             </form>
           </div>
         </div>
